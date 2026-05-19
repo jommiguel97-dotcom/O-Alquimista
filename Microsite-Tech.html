@@ -1062,7 +1062,6 @@ html.anim .reveal.revealed{opacity:1;transform:translateY(0);transition:opacity 
     if(redirectTimer) clearTimeout(redirectTimer);
     /* Guardar blend para a página de Encomendar — localStorage +
        query string (esta sobrevive mesmo sem storage, ex.: file://). */
-    var blendQS = '';
     try {
       var formulaText = document.getElementById('formula').textContent;
       var blendName = document.getElementById('bName').textContent;
@@ -1071,21 +1070,33 @@ html.anim .reveal.revealed{opacity:1;transform:translateY(0);transition:opacity 
       var priceText = document.getElementById('price').textContent;
       var aromaText = blendMeta.split('\n')[0] || '';
       var nameStr = blendName + ' · ' + blendSub.replace('torra ','') + ' · ' + aromaText.replace('aroma · ','') + ' · 250g';
-      localStorage.setItem('alquimista_blend', JSON.stringify({
+      var item = {
+        id: 'b' + Date.now() + Math.random().toString(36).slice(2, 7),
         formula: formulaText,
         name: nameStr,
-        price: priceText
+        price: priceText,
+        size: '250',
+        grind: 'whole',
+        qty: 1
+      };
+      /* Acrescenta ao carrinho (não substitui) — o utilizador pode
+         compor vários blends e o resumo soma-os todos. */
+      var cart = [];
+      try { cart = JSON.parse(localStorage.getItem('alquimista_cart')) || []; } catch(e){}
+      if (!Array.isArray(cart)) cart = [];
+      cart.push(item);
+      localStorage.setItem('alquimista_cart', JSON.stringify(cart));
+      /* Legado: mantém o último blend para compatibilidade. */
+      localStorage.setItem('alquimista_blend', JSON.stringify({
+        formula: formulaText, name: nameStr, price: priceText
       }));
-      blendQS = '?formula=' + encodeURIComponent(formulaText)
-              + '&name=' + encodeURIComponent(nameStr)
-              + '&price=' + encodeURIComponent(priceText);
     } catch(e){}
     /* Aumentar a opacidade do overlay para fazer fade-out total */
     overlay.style.transition = 'opacity .6s ease';
     overlay.style.background = 'var(--bg)';
     overlay.style.opacity = '1';
     setTimeout(function(){
-      window.location.href = 'Encomendar.html' + blendQS;
+      window.location.href = 'Encomendar.html';
     }, 650);
   }
 
