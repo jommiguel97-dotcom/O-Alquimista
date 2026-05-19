@@ -118,14 +118,6 @@
           opacity: 1;
         }
       }
-      .bar .status.closed .pulse {
-        background: #b5563f;
-        animation: none;
-        opacity: 1;
-      }
-      .bar .status.closed {
-        color: #c98a78;
-      }
 
       main {
         position: relative;
@@ -1996,25 +1988,6 @@
       buildCal();
       bookRender();
 
-      /* --- ESTADO DO LAB ---
-   Aberto ter–sáb · 09h00–19h00. Fora disso mostra "lab inativo".
-   Reavalia a cada minuto, sem precisar de recarregar. */
-      (function () {
-        var elS = document.getElementById("lab-status");
-        var elL = document.getElementById("lab-label");
-        if (!elS || !elL) return;
-        function refresh() {
-          var n = new Date();
-          var dw = n.getDay(); // 0=dom, 1=seg … 6=sáb
-          var h = n.getHours();
-          var open = dw >= 2 && dw <= 6 && h >= 9 && h < 19;
-          elS.classList.toggle("closed", !open);
-          elL.innerHTML = open ? "lab&nbsp;ativo" : "lab&nbsp;inativo";
-        }
-        refresh();
-        setInterval(refresh, 60000);
-      })();
-
       /* --- VALIDAÇÃO E SUBMISSÃO ---
    Valida os campos obrigatórios antes de "submeter".
    Regras de validação:
@@ -2386,5 +2359,6 @@
       })();
     </script>
     <script src="cookie-banner.js" defer></script>
+    <script src="lab-status.js"></script>
   </body>
 </html>
